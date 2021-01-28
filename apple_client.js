@@ -42,8 +42,9 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
                 options.requestPermissions.join("%20") :
                 "name%20email";
 
-        const redirectUri = (options && options.absoluteUrlOptions && options.absoluteUrlOptions.rootUrl) || config.redirectUri;
-        const redirectUriWithOauth = redirectUri.includes('/_oauth/apple') ? redirectUri : `${redirectUri}${redirectUri.endsWith('/') ? '' : '/'}_oauth/apple`;
+        let redirectUrl = (options && options.absoluteUrlOptions && options.absoluteUrlOptions.rootUrl) || config.redirectUri;
+        if (options && options.redirectUrl) redirectUrl=options.redirectUrl;
+        const redirectUriWithOauth = redirectUrl.includes('/_oauth/apple') ? redirectUrl : `${redirectUrl}${redirectUrl.endsWith('/') ? '' : '/'}_oauth/apple`;
 
         const loginUrl =
             "https://appleid.apple.com/auth/authorize" +
@@ -52,7 +53,7 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
             `&redirect_uri=${redirectUriWithOauth}` +
             `&client_id=${getClientIdFromOptions(options, config)}` +
             `&scope=${scope}` +
-            `&state=${stateParam({loginStyle, credentialToken, redirectUrl: options && options.redirectUrl, shard: options.shard})}`;
+            `&state=${stateParam({loginStyle, credentialToken, redirectUrl, shard: options.shard})}`;
 
         OAuth.launchLogin({
             loginService: "apple",
