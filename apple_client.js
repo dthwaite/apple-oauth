@@ -88,6 +88,7 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
         },
         function (err) {
             console.error("err", err);
+            if (err.code && err.code==='1001') err=new Accounts.LoginCancelledError('Apple login cancelled');
             credentialRequestCompleteCallback(err);
         }
     );
