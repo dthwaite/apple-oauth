@@ -53,7 +53,7 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
             `&redirect_uri=${redirectUriWithOauth}` +
             `&client_id=${getClientIdFromOptions(options, config)}` +
             `&scope=${scope}` +
-            `&state=${stateParam({loginStyle, credentialToken, redirectUrl, shard: options.shard})}`;
+            `&state=${stateParam({loginStyle, credentialToken, redirectUrl: Meteor.absoluteUrl(), shard: options.shard,noCreate: FlowRouter.current().route.name!=='signup'})}`;
 
         OAuth.launchLogin({
             loginService: "apple",
@@ -81,7 +81,7 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
         function (succ) {
             Accounts.callLoginMethod({
                 methodArguments: [
-                    {...succ, code: succ.authorizationCode, methodName: "native-apple"},
+                    {...succ, code: succ.authorizationCode, methodName: "native-apple", noCreate: FlowRouter.current().route.name!=='signup'},
                 ],
                 userCallback: credentialRequestCompleteCallback,
             });

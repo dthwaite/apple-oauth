@@ -89,7 +89,7 @@ const getServiceDataFromTokens = (query, tokens, isNative = false) => {
     serviceData.refreshToken = tokens.refreshToken;
   }
 
-  const options = { profile: { email: serviceData.email } };
+  const options = { profile: { email: serviceData.email },noCreate:  query.noCreate};
 
   if(tokens.fullName){
     serviceData.name = tokens.fullName;
