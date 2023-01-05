@@ -207,11 +207,11 @@ const getTokens = (query, isNative = false) => {
 
   let response;
   try {
-    const { rootUrl } = getAbsoluteUrlOptions(query) || {};
+    const { rootUrl } = isNative ? {} : getAbsoluteUrlOptions(query) || {};
 
     const redirectUri = rootUrl || Apple.config.redirectUri;
-    const redirectUriWithOauth = redirectUri.includes('/_oauth/apple')
-      ? redirectUri
+    const redirectUriWithOauth = !redirectUri || redirectUri.includes('/_oauth/apple')
+      ? redirectUri || null
       : `${redirectUri}${redirectUri.endsWith('/') ? '' : '/'}_oauth/apple`;
 
     response = HTTP.post(endpoint, {
