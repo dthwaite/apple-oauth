@@ -3,6 +3,7 @@ import { Promise } from 'meteor/promise';
 import Apple from './namespace.js';
 import { Accounts } from 'meteor/accounts-base';
 import { getAppIdFromOptions, getClientIdFromOptions, getServiceConfiguration } from './utils';
+import parseUri from 'parse-uri';
 
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
@@ -163,8 +164,8 @@ function getAbsoluteUrlOptions(query) {
   try {
     console.log('stateFromQuery', query);
     const state = OAuth._stateFromQuery(query) || {};
-
-    const redirectUrl = state.redirectUrl;
+    let url=parseUri(state.redirectUrl);
+    const redirectUrl = url.protocol + '://' + url.host + (url.port ? ':' + url.port : '');
     return {
       rootUrl: redirectUrl,
     };
