@@ -162,7 +162,6 @@ function getAbsoluteUrlOptions(query) {
     return undefined;
   }
   try {
-    console.log('stateFromQuery', query);
     const state = OAuth._stateFromQuery(query) || {};
     let url=parseUri(state.redirectUrl);
     const redirectUrl = url.protocol + '://' + url.host + (url.port ? ':' + url.port : '');
