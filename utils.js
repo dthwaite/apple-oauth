@@ -13,9 +13,9 @@ export function getAppIdFromOptions(options) {
   return appId || null;
 }
 
-export function getServiceConfiguration({ appId = null }) {
+export async function getServiceConfiguration({ appId = null }) {
   // eslint-disable-next-line no-undef
-  const service = ServiceConfiguration.configurations.findOne({
+  const service = await ServiceConfiguration.configurations.findOneAsync({
     service: 'apple',
   });
   if (!appId) {
@@ -69,4 +69,9 @@ export function stateParam({
   // parameter when they pass it back to us.
   // Use the 'base64' package here because 'btoa' isn't supported in IE8/9.
   return Base64.encode(JSON.stringify(state));
+}
+
+export const METHOD_NAMES = {
+  NATIVE: 'native-apple',
+  WEB: 'web-apple'
 }

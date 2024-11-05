@@ -1,6 +1,15 @@
-# quavedev:apple-oauth
+# quave:apple-oauth
+
+## Ready for Meteor 3.0 at 4.0.0
 
 Sign in with Apple handler with native cordova plugin handler. forked from jramer/apple-oauth
+
+# Quick Start
+
+Add all required packages: quave:apple-oauth quave:accounts-apple service-configuration accounts-oauth
+
+Follow the next section fully.
+
 
 ## Config
 
@@ -27,8 +36,8 @@ Place the following in your settings.json:
 Set in the database on Meteor.startup:
 
 ```
-Meteor.startup(() => {
-    Accounts.loginServiceConfiguration.upsert(
+Meteor.startup(async () => {
+    await Accounts.loginServiceConfiguration.upsertAsync(
       {
         service: 'apple',
       },
@@ -45,6 +54,54 @@ And log in calling:
   Meteor.loginWithApple({
     requestPermissions: ['name', 'email'],
   });
+```
+
+### Login without Cordova
+
+If you are using `react-native` or any other tool besides Cordova, you can also use this library.
+You just need to fetch the credentials from Apple, and then send it to the Meteor server:
+```
+Meteor.call(
+          "login",
+          {
+            ...credentials,
+            code: credentials[supportsIos ? 'authorizationCode' : 'code'],
+            methodName: `${supportsIos ? 'native' : 'web'}-apple`,
+          }, (err) => {...})
+```
+
+## React-native
+In react native you could log in using `invertase/react-native-apple-authentication` and `meteorrn/core`:
+```
+Meteor.loginWithApple = async () => {
+    const credentials = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+  });
+  
+  return new Promise((resolve, reject) => {
+      Meteor._startLoggingIn();
+      Meteor.call(
+          "login",
+          {
+            ...credentials,
+            code: credentials.authorizationCode,
+            // For android you need to use 'web-apple' as the method name.
+            methodName: 'native-apple',
+          },
+          (error: any, response: unknown) => {
+            Meteor._endLoggingIn();
+            Meteor._handleLoginCallback(error, response);
+
+            if (error) {
+              return reject(error);
+            }
+
+            resolve(response);
+          }
+      );
+    });
+}
 ```
 
 ## Use multiple services ids
